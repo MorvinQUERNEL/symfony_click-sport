@@ -836,6 +836,6 @@ class __TwigTemplate_add392b8ea442b7f5812d855a509f6fd extends Template
         {% endif %}
     </div>
 {% endblock %}
-", "@WebProfiler/Collector/command.html.twig", "/home/helias/click_sport/symfony_click-sport/app/vendor/symfony/web-profiler-bundle/Resources/views/Collector/command.html.twig");
+", "@WebProfiler/Collector/command.html.twig", "/var/www/html/vendor/symfony/web-profiler-bundle/Resources/views/Collector/command.html.twig");
     }
 }

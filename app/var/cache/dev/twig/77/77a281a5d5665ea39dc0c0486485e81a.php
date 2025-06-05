@@ -180,6 +180,6 @@ class __TwigTemplate_04960f697e44c1fb4fdd86381c63c49d extends Template
 
     {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: profiler_url, name: 'time', status: status_color }) }}
 {% endblock %}
-", "@WebProfiler/Collector/memory.html.twig", "/home/helias/click_sport/symfony_click-sport/app/vendor/symfony/web-profiler-bundle/Resources/views/Collector/memory.html.twig");
+", "@WebProfiler/Collector/memory.html.twig", "/var/www/html/vendor/symfony/web-profiler-bundle/Resources/views/Collector/memory.html.twig");
     }
 }

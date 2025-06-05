@@ -1943,6 +1943,6 @@ class __TwigTemplate_df0f751506876a2e20817893eb57105d extends Template
         </tbody>
     </table>
 {% endmacro %}
-", "@Doctrine/Collector/db.html.twig", "/home/helias/click_sport/symfony_click-sport/app/vendor/doctrine/doctrine-bundle/templates/Collector/db.html.twig");
+", "@Doctrine/Collector/db.html.twig", "/var/www/html/vendor/doctrine/doctrine-bundle/templates/Collector/db.html.twig");
     }
 }

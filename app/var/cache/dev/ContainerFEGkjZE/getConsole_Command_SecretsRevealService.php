@@ -24,7 +24,7 @@ class getConsole_Command_SecretsRevealService extends App_KernelDevDebugContaine
         include_once \dirname(__DIR__, 4).'/vendor/symfony/framework-bundle/Secrets/AbstractVault.php';
         include_once \dirname(__DIR__, 4).'/vendor/symfony/framework-bundle/Secrets/DotenvVault.php';
 
-        $container->privates['console.command.secrets_reveal'] = $instance = new \Symfony\Bundle\FrameworkBundle\Command\SecretsRevealCommand(($container->privates['secrets.vault'] ?? $container->load('getSecrets_VaultService')), ($container->privates['secrets.local_vault'] ??= new \Symfony\Bundle\FrameworkBundle\Secrets\DotenvVault((\dirname(__DIR__, 4).'/.env.local.local'))));
+        $container->privates['console.command.secrets_reveal'] = $instance = new \Symfony\Bundle\FrameworkBundle\Command\SecretsRevealCommand(($container->privates['secrets.vault'] ?? $container->load('getSecrets_VaultService')), ($container->privates['secrets.local_vault'] ??= new \Symfony\Bundle\FrameworkBundle\Secrets\DotenvVault((\dirname(__DIR__, 4).'/.env.dev.local'))));
 
         $instance->setName('secrets:reveal');
         $instance->setDescription('Reveal the value of a secret');
