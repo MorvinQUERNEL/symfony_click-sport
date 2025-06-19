@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/home.css">
+{% endblock %}
+
+{% block body %}
+<div class="header">
+    <nav class="main-nav">
+        <div class="nav-logo">
+            <img src="/img/logo.png" alt="Logo" class="logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" class="active">Accueil</a></li>
+            <li><a href="#categories">Catégories</a></li>
+            <li><a href="#articles">Articles</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="burger" id="burger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+    <div class="navbar">
+        <div class="menu-icon"></div>
+        <img src="/img/logo.png" alt="Logo" class="logo">
+        <div class="icons">
+            <span class="icon-user"></span>
+            <span class="icon-cart"></span>
+        </div>
+    </div>
+    <div class="search-bar">
+        <input type="text" placeholder="Rechercher...">
+        <span class="icon-search"></span>
+    </div>
+    <div class="header-image">
+        <img src="/img/header-sport.jpg" alt="Equipements">
+        <h1>TOUT VOS EQUIPEMENTS ET MATERIELS</h1>
+    </div>
+</div>
+
+<section id="categories" class="categories-section">
+    <h2 class="section-title">CATEGORIES</h2>
+    <div class="categories">
+        <div class="category football">FOOTBALL</div>
+        <div class="category basketball">BASKETBALL</div>
+        <div class="category golf">GOLF</div>
+        <div class="category tennis">TENNIS</div>
+    </div>
+</section>
+
+<section id="articles" class="articles-section">
+    <h2 class="section-title">ARTICLES DU MOMENT</h2>
+    <div class="articles">
+        <div class="article">
+            <img src="/img/ballon-basket.jpg" alt="Basketball">
+            <div class="article-info">
+                <span class="brand">NBA</span>
+                <span class="desc">Balle de Tennis Vintage</span>
+                <span class="price">4.99€</span>
+            </div>
+        </div>
+        <div class="article">
+            <img src="/img/ballon-foot.jpg" alt="Football">
+            <div class="article-info">
+                <span class="brand">KIPSTA</span>
+                <span class="desc">Ballon de Football Bleu et noir</span>
+                <span class="price">9.99€</span>
+            </div>
+        </div>
+        <div class="article">
+            <img src="/img/chaussure-running.jpg" alt="Running">
+            <div class="article-info">
+                <span class="brand">ATEMI</span>
+                <span class="desc">Running Green Lantern</span>
+                <span class="price">29.99€</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="follow-us">
+        <h2>SUIVEZ-NOUS:</h2>
+        <div class="social-icons">
+            <img src="/img/facebook.png" alt="Facebook">
+            <img src="/img/instagram.png" alt="Instagram">
+            <img src="/img/snapchat.png" alt="Snapchat">
+        </div>
+    </div>
+    <div class="legal">mentions légales - copyright</div>
+</footer>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const burger = document.getElementById('burger-menu');
+    const navLinks = document.querySelector('.nav-links');
+    if (burger && navLinks) {
+        burger.addEventListener('click', function() {
+            burger.classList.toggle('open');
+            navLinks.classList.toggle('open');
+        });
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                if(window.innerWidth <= 700) {
+                    burger.classList.remove('open');
+                    navLinks.classList.remove('open');
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %} 
