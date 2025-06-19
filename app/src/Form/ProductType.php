@@ -12,6 +12,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Positive;
+use App\Form\PicturesType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class ProductType extends AbstractType
 {
@@ -81,6 +83,15 @@ class ProductType extends AbstractType
                         'maxMessage' => 'La notice ne peut pas dépasser {{ limit }} caractères',
                     ]),
                 ],
+            ])
+            ->add('pictures', CollectionType::class, [
+                'entry_type' => PicturesType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'label' => 'Images',
+                'required' => false,
+                'prototype' => true,
             ])
         ;
     }

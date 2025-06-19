@@ -6,6 +6,7 @@ use App\Repository\ProductsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Pictures;
 
 #[ORM\Entity(repositoryClass: ProductsRepository::class)]
 class Products
@@ -36,11 +37,21 @@ class Products
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?OrdersProducts $ordersProducts = null;
 
+    /**
+     * @var Collection<int, Pictures>
+     */
+    #[ORM\OneToMany(mappedBy: 'products', targetEntity: Pictures::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $pictures;
+
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    private ?categories $categories = null;
+
 
 
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->pictures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -131,6 +142,46 @@ class Products
     public function setOrdersProducts(?OrdersProducts $ordersProducts): static
     {
         $this->ordersProducts = $ordersProducts;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Pictures>
+     */
+    public function getPictures(): Collection
+    {
+        return $this->pictures;
+    }
+
+    public function addPicture(Pictures $picture): static
+    {
+        if (!$this->pictures->contains($picture)) {
+            $this->pictures[] = $picture;
+            $picture->setProducts($this);
+        }
+        return $this;
+    }
+
+    public function removePicture(Pictures $picture): static
+    {
+        if ($this->pictures->removeElement($picture)) {
+            // set the owning side to null (unless already changed)
+            if ($picture->getProducts() === $this) {
+                $picture->setProducts(null);
+            }
+        }
+        return $this;
+    }
+
+    public function getCategories(): ?categories
+    {
+        return $this->categories;
+    }
+
+    public function setCategories(?categories $categories): static
+    {
+        $this->categories = $categories;
 
         return $this;
     }
