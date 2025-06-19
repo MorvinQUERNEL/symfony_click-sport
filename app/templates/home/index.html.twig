@@ -5,91 +5,61 @@
 {% endblock %}
 
 {% block body %}
-<div class="header">
-    <nav class="main-nav">
-        <div class="nav-logo">
-            <img src="/img/logo.png" alt="Logo" class="logo">
+<header class="main-header">
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="/images/logo_complet.png" alt="Logo Click Sport" class="logo">
         </div>
-        <ul class="nav-links">
+        <button class="burger" id="burger-menu" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-links">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
             <li><a href="#" class="active">Accueil</a></li>
             <li><a href="#categories">Catégories</a></li>
-            <li><a href="#articles">Articles</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
-        <div class="burger" id="burger-menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
     </nav>
-    <div class="navbar">
-        <div class="menu-icon"></div>
-        <img src="/img/logo.png" alt="Logo" class="logo">
-        <div class="icons">
-            <span class="icon-user"></span>
-            <span class="icon-cart"></span>
-        </div>
+    <div class="hero-section">
+        <h1>Bienvenue sur Click Sport</h1>
+        <p>Tout votre équipement sportif au meilleur prix !</p>
     </div>
-    <div class="search-bar">
-        <input type="text" placeholder="Rechercher...">
-        <span class="icon-search"></span>
-    </div>
-    <div class="header-image">
-        <img src="/img/header-sport.jpg" alt="Equipements">
-        <h1>TOUT VOS EQUIPEMENTS ET MATERIELS</h1>
-    </div>
-</div>
+</header>
 
-<section id="categories" class="categories-section">
-    <h2 class="section-title">CATEGORIES</h2>
-    <div class="categories">
-        <div class="category football">FOOTBALL</div>
-        <div class="category basketball">BASKETBALL</div>
-        <div class="category golf">GOLF</div>
-        <div class="category tennis">TENNIS</div>
-    </div>
-</section>
-
-<section id="articles" class="articles-section">
-    <h2 class="section-title">ARTICLES DU MOMENT</h2>
-    <div class="articles">
-        <div class="article">
-            <img src="/img/ballon-basket.jpg" alt="Basketball">
-            <div class="article-info">
-                <span class="brand">NBA</span>
-                <span class="desc">Balle de Tennis Vintage</span>
-                <span class="price">4.99€</span>
+<main>
+    <section id="categories" class="categories-section">
+        <h2>Nos Catégories</h2>
+        <div class="categories">
+            <div class="category-card">
+                <img src="/images/football.png" alt="Football">
+                <span>Football</span>
+            </div>
+            <div class="category-card">
+                <img src="/images/BasketBall.png" alt="Basketball">
+                <span>Basketball</span>
+            </div>
+            <div class="category-card">
+                <img src="/images/golf.png" alt="Golf">
+                <span>Golf</span>
+            </div>
+            <div class="category-card">
+                <img src="/images/Tennis.png" alt="Tennis">
+                <span>Tennis</span>
             </div>
         </div>
-        <div class="article">
-            <img src="/img/ballon-foot.jpg" alt="Football">
-            <div class="article-info">
-                <span class="brand">KIPSTA</span>
-                <span class="desc">Ballon de Football Bleu et noir</span>
-                <span class="price">9.99€</span>
-            </div>
-        </div>
-        <div class="article">
-            <img src="/img/chaussure-running.jpg" alt="Running">
-            <div class="article-info">
-                <span class="brand">ATEMI</span>
-                <span class="desc">Running Green Lantern</span>
-                <span class="price">29.99€</span>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
+</main>
 
 <footer class="footer">
-    <div class="follow-us">
-        <h2>SUIVEZ-NOUS:</h2>
-        <div class="social-icons">
-            <img src="/img/facebook.png" alt="Facebook">
-            <img src="/img/instagram.png" alt="Instagram">
-            <img src="/img/snapchat.png" alt="Snapchat">
+    <div class="footer-content">
+        <div class="socials">
+            <a href="#"><img src="/svg/facebook.svg" alt="Facebook"></a>
+            <a href="#"><img src="/svg/instagram.svg" alt="Instagram"></a>
+            <a href="#"><img src="/svg/twitter.svg" alt="Twitter"></a>
         </div>
+        <div class="legal">&copy; 2024 Click Sport - Tous droits réservés</div>
     </div>
-    <div class="legal">mentions légales - copyright</div>
 </footer>
 {% endblock %}
 
@@ -98,21 +68,13 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const burger = document.getElementById('burger-menu');
-    const navLinks = document.querySelector('.nav-links');
-    if (burger && navLinks) {
-        burger.addEventListener('click', function() {
-            burger.classList.toggle('open');
-            navLinks.classList.toggle('open');
-        });
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                if(window.innerWidth <= 700) {
-                    burger.classList.remove('open');
-                    navLinks.classList.remove('open');
-                }
-            });
-        });
-    }
+    const navLinks = document.getElementById('nav-links');
+    burger.addEventListener('click', function() {
+        burger.classList.toggle('open');
+        navLinks.classList.toggle('open');
+        const expanded = burger.getAttribute('aria-expanded') === 'true';
+        burger.setAttribute('aria-expanded', !expanded);
+    });
 });
 </script>
-{% endblock %} 
+{% endblock %}
