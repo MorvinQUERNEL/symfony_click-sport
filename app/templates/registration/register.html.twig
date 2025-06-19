@@ -1,0 +1,238 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - Click & Sport{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/home.css">
+    <style>
+        .register-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2e4857 0%, #7ecfc2 100%);
+            padding: 20px;
+        }
+        
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .register-header {
+            margin-bottom: 30px;
+        }
+        
+        .register-header h1 {
+            color: #22313f;
+            font-size: 2em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .register-header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #22313f;
+            font-weight: 500;
+            font-size: 1em;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #7ecfc2;
+        }
+        
+        .form-group .form-error {
+            color: #c62828;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        .register-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #2e4857 0%, #7ecfc2 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-bottom: 20px;
+        }
+        
+        .register-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .register-footer {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .register-footer a {
+            color: #7ecfc2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .register-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-home:hover {
+            color: #7ecfc2;
+        }
+        
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        
+        .flash-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        
+        .flash-success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+        
+        .flash-error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+        
+        @media (max-width: 480px) {
+            .register-card {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .register-header h1 {
+                font-size: 1.6em;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <a href="{{ path('app_home') }}" class="back-home">
+        ← Retour à l'accueil
+    </a>
+    
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <h1>Créer un compte</h1>
+                <p>Rejoignez Click & Sport et accédez à nos services</p>
+            </div>
+            
+            {% for message in app.flashes('success') %}
+                <div class="flash-messages">
+                    <div class="flash-message flash-success">
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
+            
+            {% for message in app.flashes('error') %}
+                <div class="flash-messages">
+                    <div class="flash-message flash-error">
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
+            
+            {{ form_start(registrationForm) }}
+                <div class="form-group">
+                    {{ form_label(registrationForm.email) }}
+                    {{ form_widget(registrationForm.email) }}
+                    {{ form_errors(registrationForm.email) }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form_label(registrationForm.name) }}
+                    {{ form_widget(registrationForm.name) }}
+                    {{ form_errors(registrationForm.name) }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form_label(registrationForm.firstname) }}
+                    {{ form_widget(registrationForm.firstname) }}
+                    {{ form_errors(registrationForm.firstname) }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form_label(registrationForm.phone_number) }}
+                    {{ form_widget(registrationForm.phone_number) }}
+                    {{ form_errors(registrationForm.phone_number) }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form_label(registrationForm.plainPassword.first) }}
+                    {{ form_widget(registrationForm.plainPassword.first) }}
+                    {{ form_errors(registrationForm.plainPassword.first) }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form_label(registrationForm.plainPassword.second) }}
+                    {{ form_widget(registrationForm.plainPassword.second) }}
+                    {{ form_errors(registrationForm.plainPassword.second) }}
+                </div>
+                
+                <button type="submit" class="register-btn">
+                    Créer mon compte
+                </button>
+            {{ form_end(registrationForm) }}
+            
+            <div class="register-footer">
+                <p>Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

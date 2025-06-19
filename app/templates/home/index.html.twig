@@ -8,7 +8,7 @@
 <header class="main-header">
     <nav class="navbar">
         <div class="logo-container">
-            <img src="/images/logo_complet.png" alt="Logo Click Sport" class="logo">
+            <img src="{{asset('images/logo_simple.png')}}" alt="Logo Click Sport" class="logo">
         </div>
         <button class="burger" id="burger-menu" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-links">
             <span></span>
@@ -18,12 +18,25 @@
         <ul class="nav-links" id="nav-links">
             <li><a href="#" class="active">Accueil</a></li>
             <li><a href="#categories">Catégories</a></li>
+            <li><a href="#articles">Articles</a></li>
             <li><a href="#contact">Contact</a></li>
+            {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                <li><a href="{{ path('app_product_add') }}" class="admin-link">Ajouter un produit</a></li>
+            {% endif %}
+            {% if app.user %}
+                <li><a href="{{ path('app_logout') }}" class="logout-link">Déconnexion</a></li>
+            {% else %}
+                <li><a href="{{ path('app_login') }}" class="login-link">Connectez-vous</a></li>
+            {% endif %}
         </ul>
     </nav>
     <div class="hero-section">
         <h1>Bienvenue sur Click Sport</h1>
-        <p>Tout votre équipement sportif au meilleur prix !</p>
+        {% if app.user %}
+            <p>Bonjour {{ app.user.firstname }} {{ app.user.name }} ! Tout votre équipement sportif au meilleur prix !</p>
+        {% else %}
+            <p>Tout votre équipement sportif au meilleur prix !</p>
+        {% endif %}
     </div>
 </header>
 

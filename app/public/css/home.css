@@ -15,90 +15,121 @@ body {
 
 .navbar {
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 0 16px;
-    height: 70px;
+    padding: 0 20px;
+    background: #22313f;
     position: relative;
+    z-index: 100;
 }
+
 .logo-container {
-    display: flex;
-    align-items: center;
+    flex-shrink: 0;
 }
+
 .logo {
-    height: 48px;
-    width: auto;
-    max-width: 180px;
-    display: block;
+    height: 60px;
+    max-width: 300px;
+    object-fit: contain;
 }
+
 .burger {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
     background: none;
     border: none;
-    cursor: pointer;
-    z-index: 200;
-    margin-left: 8px;
+    padding: 0;
+    z-index: 101;
 }
+
 .burger span {
-    display: block;
     height: 4px;
     width: 100%;
-    background: #7ecfc2;
-    margin: 5px 0;
+    background: #fff;
+    margin: 4px 0;
     border-radius: 2px;
-    transition: all 0.3s;
+    display: block;
+    transition: all 0.3s ease-in-out;
+    transform-origin: center;
 }
+
+/* Animation du burger quand ouvert */
 .burger.open span:nth-child(1) {
-    transform: rotate(45deg) translate(7px, 7px);
+    transform: rotate(45deg) translate(6px, 6px);
 }
+
 .burger.open span:nth-child(2) {
     opacity: 0;
 }
+
 .burger.open span:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -7px);
+    transform: rotate(-45deg) translate(6px, -6px);
 }
+
 .nav-links {
-    position: absolute;
-    top: 70px;
-    right: 0;
-    background: #22313f;
-    flex-direction: column;
-    align-items: flex-end;
-    width: 100vw;
-    max-width: 320px;
-    box-shadow: 0 4px 24px rgba(34,49,63,0.10);
-    padding: 24px 32px 24px 24px;
-    gap: 24px;
-    transition: right 0.3s, opacity 0.3s, visibility 0.3s;
-    opacity: 0;
-    visibility: hidden;
-    right: -350px;
-    z-index: 150;
     list-style: none;
+    display: flex;
+    gap: 32px;
     margin: 0;
+    padding: 0;
+    align-items: center;
 }
-.nav-links.open {
-    opacity: 1;
-    visibility: visible;
-    right: 0;
-}
+
 .nav-links li a {
-    color: #7ecfc2;
-    font-size: 1.2em;
-    font-weight: 500;
-    text-decoration: none;
-    border-bottom: none;
-    padding: 12px 0;
-    transition: color 0.2s;
-}
-.nav-links li a.active,
-.nav-links li a:hover {
     color: #fff;
+    text-decoration: none;
+    font-size: 1.1em;
+    font-weight: 500;
+    padding: 8px 0;
+    transition: color 0.2s, border-bottom 0.2s;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-links li a.active,
+.nav-links li a:hover,
+.nav-links li a:focus {
+    color: #7ecfc2;
+    border-bottom: 2px solid #7ecfc2;
+}
+
+.nav-links li a.login-link,
+.nav-links li a.logout-link,
+.nav-links li a.admin-link {
+    background: linear-gradient(90deg, #2e4857 0%, #7ecfc2 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    transition: all 0.3s ease;
+    margin: 0;
+    display: inline-block;
+    width: auto;
+    box-sizing: border-box;
+}
+
+.nav-links li a.login-link:hover,
+.nav-links li a.login-link:focus,
+.nav-links li a.logout-link:hover,
+.nav-links li a.logout-link:focus,
+.nav-links li a.admin-link:hover,
+.nav-links li a.admin-link:focus {
+    background: linear-gradient(90deg, #7ecfc2 0%, #2e4857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(126, 207, 194, 0.3);
+    border-bottom: none;
+}
+
+.nav-links li a.admin-link {
+    background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.nav-links li a.admin-link:hover,
+.nav-links li a.admin-link:focus {
+    background: linear-gradient(90deg, #c0392b 0%, #e74c3c 100%);
 }
 
 .hero-section {
@@ -199,35 +230,81 @@ body {
     color: #fff;
 }
 
-@media (min-width: 600px) {
-    .navbar {
-        height: 90px;
-        padding: 0 32px;
-    }
-    .logo {
-        height: 64px;
-        max-width: 220px;
-    }
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
     .nav-links {
-        top: 90px;
-        max-width: 320px;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: #22313f;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        padding: 0;
+        max-height: 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease-in-out;
+        z-index: 99;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .category-card img {
-        height: 160px;
+    
+    .nav-links.open {
+        max-height: 400px;
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        padding: 16px 0;
+    }
+    
+    .nav-links li {
+        width: 100%;
+        text-align: center;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-links li:last-child {
+        border-bottom: none;
+    }
+    
+    .nav-links li a.login-link,
+    .nav-links li a.logout-link,
+    .nav-links li a.admin-link {
+        background: linear-gradient(90deg, #2e4857 0%, #7ecfc2 100%);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 25px;
+        margin: 8px 20px;
+        display: inline-block;
+        width: calc(100% - 40px);
+        box-sizing: border-box;
+        border-bottom: none;
+    }
+    
+    .nav-links li a.login-link:hover,
+    .nav-links li a.login-link:focus,
+    .nav-links li a.logout-link:hover,
+    .nav-links li a.logout-link:focus,
+    .nav-links li a.admin-link:hover,
+    .nav-links li a.admin-link:focus {
+        background: linear-gradient(90deg, #7ecfc2 0%, #2e4857 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(126, 207, 194, 0.3);
+    }
+    
+    .burger {
+        display: flex;
     }
 }
-@media (min-width: 900px) {
-    .navbar {
-        height: 110px;
-        padding: 0 60px;
-    }
-    .logo {
-        height: 90px;
-        max-width: 320px;
-    }
+
+@media (min-width: 901px) {
     .burger {
         display: none;
     }
+    
     .nav-links {
         position: static;
         flex-direction: row;
@@ -240,29 +317,81 @@ body {
         gap: 32px;
         opacity: 1;
         visibility: visible;
-        right: 0;
+        transform: none;
         transition: none;
     }
-    .nav-links li a {
-        color: #7ecfc2;
-        font-size: 1.1em;
+    
+    .nav-links li {
+        width: auto;
+        text-align: left;
+        padding: 0;
         border-bottom: none;
+    }
+    
+    .nav-links li a {
+        color: #fff;
+        font-size: 1.1em;
+        border-bottom: 2px solid transparent;
         padding: 8px 0;
     }
+    
     .nav-links li a.active,
-    .nav-links li a:hover {
-        color: #fff;
+    .nav-links li a:hover,
+    .nav-links li a:focus {
+        color: #7ecfc2;
+        border-bottom: 2px solid #7ecfc2;
     }
-    .categories {
-        flex-direction: row;
-        justify-content: center;
-        gap: 32px;
+    
+    .nav-links li a.login-link,
+    .nav-links li a.logout-link,
+    .nav-links li a.admin-link {
+        background: linear-gradient(90deg, #2e4857 0%, #7ecfc2 100%);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: none;
+        transition: all 0.3s ease;
+        margin: 0;
+        display: inline-block;
+        width: auto;
+        box-sizing: border-box;
     }
-    .category-card {
-        width: 180px;
+    
+    .nav-links li a.login-link:hover,
+    .nav-links li a.login-link:focus,
+    .nav-links li a.logout-link:hover,
+    .nav-links li a.logout-link:focus,
+    .nav-links li a.admin-link:hover,
+    .nav-links li a.admin-link:focus {
+        background: linear-gradient(90deg, #7ecfc2 0%, #2e4857 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(126, 207, 194, 0.3);
+        border-bottom: none;
+    }
+    
+    .nav-links li a.admin-link {
+        background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+    }
+    
+    .nav-links li a.admin-link:hover,
+    .nav-links li a.admin-link:focus {
+        background: linear-gradient(90deg, #c0392b 0%, #e74c3c 100%);
+    }
+}
+
+@media (min-width: 600px) {
+    .logo {
+        height: 80px;
+        max-width: 350px;
     }
     .category-card img {
-        height: 180px;
+        height: 160px;
+    }
+}
+@media (min-width: 900px) {
+    .logo {
+        height: 100px;
+        max-width: 400px;
     }
     .footer {
         padding: 32px 0 16px 0;
