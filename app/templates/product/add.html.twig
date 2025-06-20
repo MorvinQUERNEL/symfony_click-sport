@@ -208,9 +208,16 @@
                 
                 <div class="form-group">
                     {{ form_label(form.pictures) }}
-                    {{ form_widget(form.pictures) }}
-                    {{ form_errors(form.pictures) }}
-                </div>
+                    <div class="images-collection">
+                        {% for picture in form.pictures %}
+                            <div class="image-item">
+                                {{ form_widget(picture) }}
+                                <button type="button" class="btn btn-danger btn-sm remove-image">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
                 
                 <button type="submit" class="product-btn">
                     Ajouter le produit
