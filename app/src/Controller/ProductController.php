@@ -114,6 +114,7 @@ class ProductController extends AbstractController
                                     $picture = new Pictures();
                                     $picture->setPath('/upload/' . $fileName);
                                     $product->addPicture($picture);
+                                    $picture->setProducts($product);
                                     
                                     $this->addFlash('success', 'Image "' . $originalFilename . '" uploadée avec succès');
                                 } else {
@@ -233,5 +234,77 @@ class ProductController extends AbstractController
         }
         
         return $this->render('product/test_upload.html.twig');
+    }
+
+    #[Route('/product/{id}/edit', name: 'app_product_edit')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function edit(Request $request, Products $product, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    {
+        $form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Gérer l'upload d'images supplémentaires
+            $uploadedFiles = $form->get('images')->getData();
+            $uploadDirectory = $this->getParameter('upload_directory');
+            $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            $maxFileSize = 5 * 1024 * 1024;
+            if ($uploadedFiles) {
+                foreach ($uploadedFiles as $uploadedFile) {
+                    if ($uploadedFile && $uploadedFile->isValid()) {
+                        $mimeType = $uploadedFile->getMimeType();
+                        if (!in_array($mimeType, $allowedMimeTypes)) continue;
+                        $fileSize = $uploadedFile->getSize();
+                        if ($fileSize > $maxFileSize) continue;
+                        $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+                        $safeFilename = $slugger->slug($originalFilename);
+                        $extension = $uploadedFile->guessExtension();
+                        $fileName = $safeFilename . '-' . uniqid() . '.' . $extension;
+                        $uploadedFile->move($uploadDirectory, $fileName);
+                        $picture = new Pictures();
+                        $picture->setPath('/upload/' . $fileName);
+                        $product->addPicture($picture);
+                        $picture->setProducts($product);
+                    }
+                }
+            }
+            // Met à jour la date de modification
+            $product->setModifyAt(new \DateTimeImmutable());
+            $entityManager->flush();
+            $this->addFlash('success', 'Produit modifié avec succès.');
+            return $this->redirectToRoute('app_product_list');
+        }
+        return $this->render('product/add.html.twig', [
+            'form' => $form->createView(),
+            'editMode' => true,
+            'product' => $product,
+        ]);
+    }
+
+    #[Route('/product/{id}/delete', name: 'app_product_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function delete(Request $request, Products $product, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete_product_' . $product->getId(), $request->request->get('_token'))) {
+            // Supprimer les fichiers images physiques
+            foreach ($product->getPictures() as $picture) {
+                $filePath = $this->getParameter('upload_directory') . '/' . basename($picture->getPath());
+                if (file_exists($filePath)) {
+                    @unlink($filePath);
+                }
+            }
+            $entityManager->remove($product);
+            $entityManager->flush();
+            $this->addFlash('success', 'Produit supprimé avec succès.');
+        }
+        return $this->redirectToRoute('app_product_list');
+    }
+
+    #[Route('/product/{id}', name: 'app_product_show', methods: ['GET'])]
+    public function show(Products $product): Response
+    {
+        return $this->render('product/show.html.twig', [
+            'product' => $product
+        ]);
     }
 } 

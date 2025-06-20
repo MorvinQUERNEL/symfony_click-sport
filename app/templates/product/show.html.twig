@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.title }} - Fiche produit{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="/css/product-show.css">
+{% endblock %}
+
+{% block body %}
+<div class="fiche-produit-container">
+    <div class="fiche-produit-header">
+        <h1>{{ product.title }}</h1>
+        <div class="fiche-produit-images">
+            {% for picture in product.pictures %}
+                <img src="{{ picture.path }}" alt="{{ product.title }}">
+            {% else %}
+                <img src="/images/ama_sports__4_-removebg-preview.png" alt="{{ product.title }}">
+            {% endfor %}
+        </div>
+    </div>
+    <div class="fiche-produit-info">
+        <p><strong>Prix :</strong> {{ product.price|number_format(2, ',', ' ') }} €</p>
+        <p><strong>Catégorie :</strong> {{ product.categories ? product.categories.title : 'Non renseignée' }}</p>
+        <p><strong>Description :</strong> {{ product.description ?: 'Aucune description.' }}</p>
+        {% if product.notice %}
+            <p><strong>Notice :</strong> {{ product.notice }}</p>
+        {% endif %}
+    </div>
+    <div class="fiche-produit-meta">
+        <div>Créé le : {{ product.createdAt|date('d/m/Y H:i') }}</div>
+        {% if product.modifyAt %}
+            <div>Modifié le : {{ product.modifyAt|date('d/m/Y H:i') }}</div>
+        {% endif %}
+    </div>
+    <div style="margin-top:2rem; text-align:center;">
+        <a href="{{ path('app_product_list') }}" class="btn btn-secondary">← Retour à la liste</a>
+    </div>
+</div>
+{% endblock %} 

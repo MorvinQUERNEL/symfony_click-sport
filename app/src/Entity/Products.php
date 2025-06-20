@@ -28,6 +28,12 @@ class Products
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $notice = null;
 
+    #[ORM\Column(type: 'datetime_immutable', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $modifyAt = null;
+
     /**
      * @var Collection<int, Users>
      */
@@ -52,6 +58,9 @@ class Products
     {
         $this->users = new ArrayCollection();
         $this->pictures = new ArrayCollection();
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTimeImmutable();
+        }
     }
 
     public function getId(): ?int
@@ -109,6 +118,28 @@ class Products
     {
         $this->notice = $notice;
 
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getModifyAt(): ?\DateTimeImmutable
+    {
+        return $this->modifyAt;
+    }
+
+    public function setModifyAt(?\DateTimeImmutable $modifyAt): static
+    {
+        $this->modifyAt = $modifyAt;
         return $this;
     }
 

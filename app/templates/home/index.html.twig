@@ -5,40 +5,7 @@
 {% endblock %}
 
 {% block body %}
-<header class="main-header">
-    <nav class="navbar">
-        <div class="logo-container">
-            <img src="{{asset('images/logo_simple.png')}}" alt="Logo Click Sport" class="logo">
-        </div>
-        <button class="burger" id="burger-menu" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-links">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <ul class="nav-links" id="nav-links">
-            <li><a href="#" class="active">Accueil</a></li>
-            <li><a href="#categories">Catégories</a></li>
-            <li><a href="#articles">Articles</a></li>
-            <li><a href="#contact">Contact</a></li>
-            {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
-                <li><a href="{{ path('app_product_add') }}" class="admin-link">Ajouter un produit</a></li>
-            {% endif %}
-            {% if app.user %}
-                <li><a href="{{ path('app_logout') }}" class="logout-link">Déconnexion</a></li>
-            {% else %}
-                <li><a href="{{ path('app_login') }}" class="login-link">Connectez-vous</a></li>
-            {% endif %}
-        </ul>
-    </nav>
-    <div class="hero-section">
-        <h1>Bienvenue sur Click Sport</h1>
-        {% if app.user %}
-            <p>Bonjour {{ app.user.firstname }} {{ app.user.name }} ! Tout votre équipement sportif au meilleur prix !</p>
-        {% else %}
-            <p>Tout votre équipement sportif au meilleur prix !</p>
-        {% endif %}
-    </div>
-</header>
+
 
 <main>
     <section id="categories" class="categories-section">
@@ -61,6 +28,32 @@
                 <span>Tennis</span>
             </div>
         </div>
+    </section>
+    <section class="latest-articles-section">
+        <h2>Nos derniers articles</h2>
+        <div class="carousel" id="carousel-articles">
+            <button class="carousel-btn prev" id="carousel-prev" aria-label="Article précédent">&#10094;</button>
+            <div class="carousel-track" id="carousel-track">
+                {% for product in latestProducts %}
+                    <div class="carousel-item">
+                        {% set mainPicture = product.pictures|first %}
+                        {% if mainPicture %}
+                            <img src="{{ mainPicture.getPath() }}" alt="{{ product.title }}" class="carousel-img">
+                        {% else %}
+                            <img src="/images/ama_sports__4_-removebg-preview.png" alt="{{ product.title }}" class="carousel-img">
+                        {% endif %}
+                        <div class="carousel-info">
+                            <h3>{{ product.title }}</h3>
+                            <p>{{ product.price|number_format(2, ',', ' ') }} €</p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="carousel-item empty">Aucun article récent</div>
+                {% endfor %}
+            </div>
+            <button class="carousel-btn next" id="carousel-next" aria-label="Article suivant">&#10095;</button>
+        </div>
+        <div class="carousel-pagination" id="carousel-pagination"></div>
     </section>
 </main>
 
