@@ -27,7 +27,7 @@
             </div>
         {% endfor %}
 
-        {{ form_start(form, {'attr': {'class': 'product-form'}}) }}
+        {{ form_start(form, {'attr': {'class': 'product-form', 'enctype': 'multipart/form-data'}}) }}
         
         <div class="form-section">
             <h3>Informations générales</h3>
@@ -107,7 +107,6 @@
             const selectedFiles = document.getElementById('selectedFiles');
             const fileCounter = document.getElementById('fileCounter');
             const maxFiles = 5;
-            let selectedFilesArray = [];
 
             // Gestion du drag & drop
             fileInputContainer.addEventListener('dragover', function(e) {
@@ -134,39 +133,30 @@
             });
 
             function handleFiles(files) {
-                const remainingSlots = maxFiles - selectedFilesArray.length;
-                const filesToAdd = files.slice(0, remainingSlots);
-
-                filesToAdd.forEach(file => {
+                // Vider la prévisualisation existante
+                selectedFiles.innerHTML = '';
+                
+                // Limiter le nombre de fichiers
+                const filesToProcess = files.slice(0, maxFiles);
+                
+                filesToProcess.forEach((file, index) => {
                     if (file.type.startsWith('image/')) {
                         // Vérifier la taille du fichier (5MB max)
                         if (file.size > 5 * 1024 * 1024) {
                             showError(`Le fichier "${file.name}" est trop volumineux (max 5MB)`);
                             return;
                         }
-
-                        // Vérifier si le fichier n'est pas déjà sélectionné
-                        const isDuplicate = selectedFilesArray.some(existingFile => 
-                            existingFile.name === file.name && existingFile.size === file.size
-                        );
-
-                        if (!isDuplicate) {
-                            selectedFilesArray.push(file);
-                            createFilePreview(file);
-                            updateFileCounter();
-                        } else {
-                            showError(`Le fichier "${file.name}" est déjà sélectionné`);
-                        }
+                        
+                        createFilePreview(file, index);
                     } else {
                         showError(`Le fichier "${file.name}" n'est pas une image valide`);
                     }
                 });
-
-                // Mettre à jour l'input file avec les fichiers sélectionnés
-                updateFileInput();
+                
+                updateFileCounter(filesToProcess.length);
             }
 
-            function createFilePreview(file) {
+            function createFilePreview(file, index) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const preview = document.createElement('div');
@@ -187,21 +177,18 @@
             }
 
             function removeFile(filename) {
-                // Supprimer le fichier du tableau
-                selectedFilesArray = selectedFilesArray.filter(file => file.name !== filename);
-                
                 // Supprimer la prévisualisation
                 const preview = selectedFiles.querySelector(`[data-filename="${filename}"]`);
                 if (preview) {
                     preview.remove();
                 }
                 
-                updateFileCounter();
-                updateFileInput();
+                // Mettre à jour le compteur
+                const remainingFiles = selectedFiles.querySelectorAll('.file-preview');
+                updateFileCounter(remainingFiles.length);
             }
 
-            function updateFileCounter() {
-                const count = selectedFilesArray.length;
+            function updateFileCounter(count) {
                 if (count === 0) {
                     fileCounter.textContent = 'Aucune image sélectionnée';
                 } else if (count === 1) {
@@ -218,13 +205,6 @@
                     fileCounter.style.color = '#7f8c8d';
                     fileInputContainer.style.borderColor = '#bdc3c7';
                 }
-            }
-
-            function updateFileInput() {
-                // Créer un nouveau FileList avec les fichiers sélectionnés
-                const dt = new DataTransfer();
-                selectedFilesArray.forEach(file => dt.items.add(file));
-                fileInput.files = dt.files;
             }
 
             function formatFileSize(bytes) {
@@ -277,7 +257,7 @@
             }
 
             // Initialiser le compteur
-            updateFileCounter();
+            updateFileCounter(0);
 
             // Rendre la fonction removeFile globale pour qu'elle soit accessible depuis le HTML
             window.removeFile = removeFile;

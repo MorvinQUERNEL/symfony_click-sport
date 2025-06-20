@@ -16,6 +16,7 @@ class Pictures
     #[ORM\Column(length: 255)]
     private ?string $path = null;
 
+
     #[ORM\ManyToOne(inversedBy: 'pictures')]
     private ?Products $products = null;
 

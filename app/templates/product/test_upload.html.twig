@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Test Upload - Click & Sport{% endblock %}
+
+{% block body %}
+    <div style="max-width: 600px; margin: 2rem auto; padding: 2rem; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
+        <h1>Test d'upload simple</h1>
+        
+        {% for message in app.flashes('success') %}
+            <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                {{ message }}
+            </div>
+        {% endfor %}
+        
+        {% for message in app.flashes('error') %}
+            <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                {{ message }}
+            </div>
+        {% endfor %}
+        
+        <form method="post" enctype="multipart/form-data">
+            <div style="margin-bottom: 1rem;">
+                <label for="test_files">Sélectionner des fichiers :</label>
+                <input type="file" name="test_files[]" id="test_files" multiple accept="image/*" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            
+            <button type="submit" style="background: #3498db; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer;">
+                Tester l'upload
+            </button>
+        </form>
+        
+        <div style="margin-top: 2rem;">
+            <a href="{{ path('app_product_add') }}" style="color: #3498db; text-decoration: none;">
+                ← Retour au formulaire d'ajout de produit
+            </a>
+        </div>
+    </div>
+{% endblock %} 

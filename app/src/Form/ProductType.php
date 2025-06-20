@@ -118,19 +118,6 @@ class ProductType extends AbstractType
                     'class' => 'form-input file-input',
                     'accept' => 'image/*'
                 ],
-                'constraints' => [
-                    new File([
-                        'maxSize' => '5M',
-                        'mimeTypes' => [
-                            'image/jpeg',
-                            'image/png',
-                            'image/webp',
-                            'image/gif'
-                        ],
-                        'mimeTypesMessage' => 'Veuillez uploader une image valide (JPG, PNG, WebP, GIF)',
-                        'maxSizeMessage' => 'L\'image ne peut pas dépasser 5MB'
-                    ])
-                ],
             ])
         ;
     }

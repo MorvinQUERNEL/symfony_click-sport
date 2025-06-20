@@ -3,6 +3,8 @@
 namespace App\Command;
 
 use App\Entity\Categories;
+use App\Entity\Products;
+use App\Entity\Pictures;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -12,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:check-categories',
-    description: 'Vérifier et créer des catégories si nécessaire',
+    description: 'Vérifie les catégories et teste la création de produits avec images',
 )]
 class CheckCategoriesCommand extends Command
 {
@@ -26,35 +28,68 @@ class CheckCategoriesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        // Vérifier s'il y a des catégories
-        $categoriesCount = $this->entityManager->getRepository(Categories::class)->count([]);
+        $io->title('Vérification des catégories et test de création de produits');
+
+        // Vérifier les catégories existantes
+        $categories = $this->entityManager->getRepository(Categories::class)->findAll();
         
-        if ($categoriesCount === 0) {
-            $io->warning('Aucune catégorie trouvée. Création de catégories par défaut...');
+        if (empty($categories)) {
+            $io->warning('Aucune catégorie trouvée !');
+            $io->text('Création de catégories de test...');
             
-            $defaultCategories = [
+            $testCategories = [
                 'Football',
-                'Basketball',
+                'Basketball', 
                 'Tennis',
                 'Golf',
                 'Natation',
-                'Fitness',
-                'Running',
-                'Vélo',
-                'Escalade',
+                'Course à pied',
+                'Musculation',
                 'Yoga'
             ];
-
-            foreach ($defaultCategories as $categoryName) {
+            
+            foreach ($testCategories as $categoryName) {
                 $category = new Categories();
                 $category->setTitle($categoryName);
                 $this->entityManager->persist($category);
             }
-
+            
             $this->entityManager->flush();
-            $io->success(sprintf('%d catégories ont été créées avec succès !', count($defaultCategories)));
+            $io->success(count($testCategories) . ' catégories créées !');
+            
+            // Récupérer les catégories créées
+            $categories = $this->entityManager->getRepository(Categories::class)->findAll();
+        }
+
+        $io->section('Catégories disponibles :');
+        foreach ($categories as $category) {
+            $io->text("• {$category->getTitle()} (ID: {$category->getId()})");
+        }
+
+        // Vérifier les produits existants
+        $products = $this->entityManager->getRepository(Products::class)->findAll();
+        $io->section('Produits existants :');
+        
+        if (empty($products)) {
+            $io->text('Aucun produit trouvé.');
         } else {
-            $io->success(sprintf('%d catégories trouvées dans la base de données.', $categoriesCount));
+            foreach ($products as $product) {
+                $imageCount = $product->getPictures()->count();
+                $io->text("• {$product->getTitle()} - {$product->getPrice()}€ - {$imageCount} image(s)");
+            }
+        }
+
+        // Vérifier les images en base de données
+        $pictures = $this->entityManager->getRepository(Pictures::class)->findAll();
+        $io->section('Images en base de données :');
+        
+        if (empty($pictures)) {
+            $io->text('Aucune image trouvée en base de données.');
+        } else {
+            foreach ($pictures as $picture) {
+                $productTitle = $picture->getProducts() ? $picture->getProducts()->getTitle() : 'Aucun produit';
+                $io->text("• {$picture->getPath()} (Produit: {$productTitle})");
+            }
         }
 
         return Command::SUCCESS;

@@ -1,0 +1,175 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Images uploadées - Click & Sport{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .images-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .images-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .images-header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .images-header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .image-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-preview {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-info {
+            padding: 1rem;
+        }
+
+        .image-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+
+        .image-details {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        .image-path {
+            background: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #495057;
+            margin-top: 0.5rem;
+            word-break: break-all;
+        }
+
+        .no-images {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+
+        .no-images h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .images-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+
+            .images-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="images-container">
+        <div class="images-header">
+            <h1>Images uploadées</h1>
+            <p>Voir toutes les images uploadées dans le dossier public/upload/</p>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <a href="{{ path('app_product_add') }}" class="back-btn">
+                ➕ Ajouter un produit
+            </a>
+            <a href="{{ path('app_home') }}" class="back-btn" style="margin-left: 1rem;">
+                🏠 Accueil
+            </a>
+        </div>
+
+        {% if images is empty %}
+            <div class="no-images">
+                <h3>Aucune image trouvée</h3>
+                <p>Il n'y a pas encore d'images uploadées dans le dossier public/upload/</p>
+                <a href="{{ path('app_product_add') }}" class="back-btn">
+                    Uploader des images
+                </a>
+            </div>
+        {% else %}
+            <div class="images-grid">
+                {% for image in images %}
+                    <div class="image-card">
+                        <div class="image-preview">
+                            <img src="{{ image.path }}" alt="{{ image.name }}">
+                        </div>
+                        
+                        <div class="image-info">
+                            <div class="image-name">{{ image.name }}</div>
+                            <div class="image-details">
+                                <strong>Taille :</strong> {{ (image.size / 1024)|round(1) }} KB<br>
+                                <strong>Date :</strong> {{ image.date|date('d/m/Y H:i') }}
+                            </div>
+                            <div class="image-path">{{ image.path }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %} 

@@ -25,17 +25,34 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
+            // Debug: Afficher les données du formulaire
+            $this->addFlash('info', 'Formulaire soumis - Début du traitement');
+            
             if ($form->isValid()) {
+                $this->addFlash('info', 'Formulaire valide - Traitement des images');
+                
                 // Gérer l'upload des images
                 $uploadedFiles = $form->get('images')->getData();
                 $uploadedImagesCount = 0;
+                $uploadedImagePaths = [];
+                
+                // Debug: Vérifier si des fichiers ont été reçus
+                if ($uploadedFiles) {
+                    $this->addFlash('info', 'Fichiers reçus : ' . count($uploadedFiles) . ' fichier(s)');
+                } else {
+                    $this->addFlash('warning', 'Aucun fichier reçu dans le formulaire');
+                }
                 
                 if ($uploadedFiles) {
                     $uploadDirectory = $this->getParameter('upload_directory');
                     
+                    // Debug: Afficher le chemin du dossier
+                    $this->addFlash('info', 'Dossier d\'upload : ' . $uploadDirectory);
+                    
                     // Vérifier que le dossier existe et est accessible en écriture
                     if (!is_dir($uploadDirectory)) {
                         mkdir($uploadDirectory, 0755, true);
+                        $this->addFlash('info', 'Dossier d\'upload créé');
                     }
                     
                     if (!is_writable($uploadDirectory)) {
@@ -43,16 +60,44 @@ class ProductController extends AbstractController
                         return $this->render('product/add.html.twig', [
                             'form' => $form->createView(),
                         ]);
+                    } else {
+                        $this->addFlash('info', 'Dossier d\'upload accessible en écriture');
                     }
                     
-                    foreach ($uploadedFiles as $uploadedFile) {
+                    // Validation des fichiers
+                    $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                    $maxFileSize = 5 * 1024 * 1024; // 5MB
+                    
+                    foreach ($uploadedFiles as $index => $uploadedFile) {
+                        $this->addFlash('info', 'Traitement du fichier ' . ($index + 1) . ' : ' . $uploadedFile->getClientOriginalName());
+                        
                         if ($uploadedFile && $uploadedFile->isValid()) {
+                            // Vérifier le type MIME
+                            $mimeType = $uploadedFile->getMimeType();
+                            $this->addFlash('info', 'Type MIME : ' . $mimeType);
+                            
+                            if (!in_array($mimeType, $allowedMimeTypes)) {
+                                $this->addFlash('error', 'Le fichier "' . $uploadedFile->getClientOriginalName() . '" n\'est pas une image valide. Types acceptés : JPG, PNG, WebP, GIF');
+                                continue;
+                            }
+                            
+                            // Vérifier la taille
+                            $fileSize = $uploadedFile->getSize();
+                            $this->addFlash('info', 'Taille du fichier : ' . ($fileSize / 1024) . ' KB');
+                            
+                            if ($fileSize > $maxFileSize) {
+                                $this->addFlash('error', 'Le fichier "' . $uploadedFile->getClientOriginalName() . '" est trop volumineux (max 5MB)');
+                                continue;
+                            }
+                            
                             try {
                                 // Générer un nom de fichier unique et sécurisé
                                 $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
                                 $safeFilename = $slugger->slug($originalFilename);
                                 $extension = $uploadedFile->guessExtension();
                                 $fileName = $safeFilename . '-' . uniqid() . '.' . $extension;
+                                
+                                $this->addFlash('info', 'Nom de fichier généré : ' . $fileName);
                                 
                                 // Chemin complet du fichier
                                 $filePath = $uploadDirectory . '/' . $fileName;
@@ -62,11 +107,13 @@ class ProductController extends AbstractController
                                 
                                 // Vérifier que le fichier a bien été créé
                                 if (file_exists($filePath)) {
-                                    // Créer l'entité Picture avec le chemin relatif
+                                    $uploadedImagePaths[] = '/upload/' . $fileName;
+                                    $uploadedImagesCount++;
+                                    
+                                    // Créer l'entité Pictures et l'ajouter au produit
                                     $picture = new Pictures();
                                     $picture->setPath('/upload/' . $fileName);
                                     $product->addPicture($picture);
-                                    $uploadedImagesCount++;
                                     
                                     $this->addFlash('success', 'Image "' . $originalFilename . '" uploadée avec succès');
                                 } else {
@@ -82,7 +129,7 @@ class ProductController extends AbstractController
                     }
                 }
 
-                // Sauvegarder le produit et ses images
+                // Essayer de sauvegarder en base de données, sinon afficher un résumé
                 try {
                     $entityManager->persist($product);
                     $entityManager->flush();
@@ -96,7 +143,15 @@ class ProductController extends AbstractController
                     return $this->redirectToRoute('app_product_list');
                     
                 } catch (\Exception $e) {
-                    $this->addFlash('error', 'Erreur lors de la sauvegarde en base de données : ' . $e->getMessage());
+                    // Si la base de données échoue, afficher un résumé des uploads
+                    $this->addFlash('warning', '⚠️ Base de données non disponible - Les images ont été uploadées avec succès !');
+                    
+                    if ($uploadedImagesCount > 0) {
+                        $this->addFlash('success', '✅ ' . $uploadedImagesCount . ' image(s) uploadée(s) dans le dossier public/upload/');
+                        $this->addFlash('info', '📁 Chemins des images : ' . implode(', ', $uploadedImagePaths));
+                    }
+                    
+                    $this->addFlash('info', '💡 Pour sauvegarder en base de données, exécutez : php bin/console doctrine:migrations:migrate');
                 }
                 
             } else {
@@ -126,5 +181,57 @@ class ProductController extends AbstractController
         return $this->render('product/list.html.twig', [
             'products' => $products,
         ]);
+    }
+
+    #[Route('/uploaded-images', name: 'app_uploaded_images')]
+    public function showUploadedImages(): Response
+    {
+        $uploadDirectory = $this->getParameter('upload_directory');
+        $images = [];
+        
+        if (is_dir($uploadDirectory)) {
+            $files = glob($uploadDirectory . '/*');
+            foreach ($files as $file) {
+                if (is_file($file) && in_array(pathinfo($file, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                    $images[] = [
+                        'name' => basename($file),
+                        'path' => '/upload/' . basename($file),
+                        'size' => filesize($file),
+                        'date' => filemtime($file)
+                    ];
+                }
+            }
+        }
+        
+        return $this->render('product/uploaded_images.html.twig', [
+            'images' => $images,
+        ]);
+    }
+
+    #[Route('/test-upload', name: 'app_test_upload')]
+    public function testUpload(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            $uploadedFiles = $request->files->get('test_files');
+            
+            if ($uploadedFiles) {
+                $uploadDirectory = $this->getParameter('upload_directory');
+                $uploadedCount = 0;
+                
+                foreach ($uploadedFiles as $file) {
+                    if ($file && $file->isValid()) {
+                        $fileName = 'test-' . uniqid() . '.' . $file->getClientOriginalExtension();
+                        $file->move($uploadDirectory, $fileName);
+                        $uploadedCount++;
+                    }
+                }
+                
+                $this->addFlash('success', $uploadedCount . ' fichier(s) uploadé(s) avec succès !');
+            } else {
+                $this->addFlash('error', 'Aucun fichier reçu');
+            }
+        }
+        
+        return $this->render('product/test_upload.html.twig');
     }
 } 
