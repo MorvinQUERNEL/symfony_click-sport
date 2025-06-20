@@ -13,6 +13,50 @@
         {% endblock %}
     </head>
     <body>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="{{ path('app_home') }}">
+                        <img src="/images/logo_simple.png" alt="Click & Sport" class="logo-img">
+                    </a>
+                </div>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <a href="{{ path('app_home') }}" class="nav-link">Accueil</a>
+                    <a href="{{ path('app_product_list') }}" class="nav-link">Produits</a>
+                    
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_product_add') }}" class="nav-link">Ajouter un produit</a>
+                    {% endif %}
+                    
+                    {% if app.user %}
+                        <a href="{{ path('app_logout') }}" class="nav-link">Déconnexion</a>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
+                    {% endif %}
+                </div>
+                
+                <div class="nav-toggle" id="nav-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+
         {% block body %}{% endblock %}
+
+        <script>
+            // Toggle menu mobile
+            const navToggle = document.getElementById('nav-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            
+            if (navToggle) {
+                navToggle.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                    navToggle.classList.toggle('active');
+                });
+            }
+        </script>
     </body>
 </html>

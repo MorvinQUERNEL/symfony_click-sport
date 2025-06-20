@@ -3,226 +3,284 @@
 {% block title %}Ajouter un produit - Click & Sport{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="/css/home.css">
-    <style>
-        .product-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #2e4857 0%, #7ecfc2 100%);
-            padding: 20px;
-        }
-        
-        .product-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            padding: 40px;
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-        }
-        
-        .product-header {
-            margin-bottom: 30px;
-        }
-        
-        .product-header h1 {
-            color: #22313f;
-            font-size: 2em;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        
-        .product-header p {
-            color: #666;
-            font-size: 1.1em;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #22313f;
-            font-weight: 500;
-            font-size: 1em;
-        }
-        
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            transition: border-color 0.3s ease;
-            box-sizing: border-box;
-            font-family: inherit;
-        }
-        
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #7ecfc2;
-        }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        
-        .form-error {
-            color: #c62828;
-            font-size: 0.85em;
-            margin-top: 5px;
-            display: block;
-        }
-        
-        .product-btn {
-            width: 100%;
-            background: linear-gradient(90deg, #2e4857 0%, #7ecfc2 100%);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            margin-bottom: 20px;
-        }
-        
-        .product-btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .back-home {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .back-home:hover {
-            color: #7ecfc2;
-        }
-        
-        .flash-messages {
-            margin-bottom: 20px;
-        }
-        
-        .flash-message {
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            font-size: 0.9em;
-        }
-        
-        .flash-success {
-            background: #e8f5e8;
-            color: #2e7d32;
-            border: 1px solid #c8e6c9;
-        }
-        
-        .flash-error {
-            background: #ffebee;
-            color: #c62828;
-            border: 1px solid #ffcdd2;
-        }
-        
-        @media (max-width: 480px) {
-            .product-card {
-                padding: 30px 20px;
-                margin: 10px;
-            }
-            
-            .product-header h1 {
-                font-size: 1.6em;
-            }
-        }
-    </style>
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/product-form.css') }}">
 {% endblock %}
 
 {% block body %}
-    <a href="{{ path('app_home') }}" class="back-home">
-        ← Retour à l'accueil
-    </a>
-    
-    <div class="product-container">
-        <div class="product-card">
-            <div class="product-header">
-                <h1>Ajouter un produit</h1>
-                <p>Remplissez les informations pour ajouter un nouveau produit</p>
-            </div>
-            
-            {% for message in app.flashes('success') %}
-                <div class="flash-messages">
-                    <div class="flash-message flash-success">
-                        {{ message }}
-                    </div>
-                </div>
-            {% endfor %}
-            
-            {% for message in app.flashes('error') %}
-                <div class="flash-messages">
-                    <div class="flash-message flash-error">
-                        {{ message }}
-                    </div>
-                </div>
-            {% endfor %}
-            
-            {{ form_start(form) }}
-                <div class="form-group">
-                    {{ form_label(form.title) }}
-                    {{ form_widget(form.title) }}
-                    {{ form_errors(form.title) }}
-                </div>
-                
-                <div class="form-group">
-                    {{ form_label(form.price) }}
-                    {{ form_widget(form.price) }}
-                    {{ form_errors(form.price) }}
-                </div>
-                
-                <div class="form-group">
-                    {{ form_label(form.description) }}
-                    {{ form_widget(form.description) }}
-                    {{ form_errors(form.description) }}
-                </div>
-                
-                <div class="form-group">
-                    {{ form_label(form.notice) }}
-                    {{ form_widget(form.notice) }}
-                    {{ form_errors(form.notice) }}
-                </div>
-                
-                <div class="form-group">
-                    {{ form_label(form.pictures) }}
-                    <div class="images-collection">
-                        {% for picture in form.pictures %}
-                            <div class="image-item">
-                                {{ form_widget(picture) }}
-                                <button type="button" class="btn btn-danger btn-sm remove-image">
-                                    <i class="fas fa-trash"></i> Supprimer
-                                </button>
-                            </div>
-                        {% endfor %}
-                    </div>
-                
-                <button type="submit" class="product-btn">
-                    Ajouter le produit
-                </button>
-            {{ form_end(form) }}
+    <div class="product-form-container">
+        <div class="form-header">
+            <h1>Ajouter un nouveau produit</h1>
+            <p>Remplissez les informations ci-dessous pour ajouter un produit à votre catalogue</p>
         </div>
+
+        {# Affichage des messages flash #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #c3e6cb;">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-error" style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #f5c6cb;">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {{ form_start(form, {'attr': {'class': 'product-form'}}) }}
+        
+        <div class="form-section">
+            <h3>Informations générales</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(form.title, 'Titre du produit', {'label_attr': {'class': 'form-label required-field'}}) }}
+                    {{ form_widget(form.title, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.title, {'attr': {'class': 'error-message'}}) }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form_label(form.price, 'Prix', {'label_attr': {'class': 'form-label required-field'}}) }}
+                    {{ form_widget(form.price, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.price, {'attr': {'class': 'error-message'}}) }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.categories, 'Catégorie', {'label_attr': {'class': 'form-label required-field'}}) }}
+                {{ form_widget(form.categories, {'attr': {'class': 'form-input'}}) }}
+                {{ form_errors(form.categories, {'attr': {'class': 'error-message'}}) }}
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Description et détails</h3>
+            
+            <div class="form-group">
+                {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-input'}}) }}
+                {{ form_errors(form.description, {'attr': {'class': 'error-message'}}) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.notice, 'Notice / Instructions', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.notice, {'attr': {'class': 'form-input'}}) }}
+                {{ form_errors(form.notice, {'attr': {'class': 'error-message'}}) }}
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Images du produit</h3>
+            
+            <div class="form-group">
+                <div class="file-input-container" id="fileInputContainer">
+                    {{ form_widget(form.images, {'attr': {'class': 'file-input', 'id': 'fileInput'}}) }}
+                    <div class="file-input-label">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-text">Cliquez ou glissez vos images ici</div>
+                        <div class="upload-hint">Formats acceptés : JPG, PNG, WebP, GIF (max 5MB par image)</div>
+                    </div>
+                </div>
+                {{ form_errors(form.images, {'attr': {'class': 'error-message'}}) }}
+                
+                <div class="selected-files" id="selectedFiles"></div>
+                <div class="file-counter" id="fileCounter" style="margin-top: 1rem; text-align: center; color: #7f8c8d; font-size: 0.9rem;"></div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ path('app_home') }}" class="btn btn-secondary">
+                <span>←</span> Annuler
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <span>✓</span> Ajouter le produit
+            </button>
+        </div>
+
+        {{ form_end(form) }}
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const fileInputContainer = document.getElementById('fileInputContainer');
+            const selectedFiles = document.getElementById('selectedFiles');
+            const fileCounter = document.getElementById('fileCounter');
+            const maxFiles = 5;
+            let selectedFilesArray = [];
+
+            // Gestion du drag & drop
+            fileInputContainer.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                fileInputContainer.classList.add('dragover');
+            });
+
+            fileInputContainer.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                fileInputContainer.classList.remove('dragover');
+            });
+
+            fileInputContainer.addEventListener('drop', function(e) {
+                e.preventDefault();
+                fileInputContainer.classList.remove('dragover');
+                const files = Array.from(e.dataTransfer.files);
+                handleFiles(files);
+            });
+
+            // Gestion de la sélection de fichiers
+            fileInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                handleFiles(files);
+            });
+
+            function handleFiles(files) {
+                const remainingSlots = maxFiles - selectedFilesArray.length;
+                const filesToAdd = files.slice(0, remainingSlots);
+
+                filesToAdd.forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        // Vérifier la taille du fichier (5MB max)
+                        if (file.size > 5 * 1024 * 1024) {
+                            showError(`Le fichier "${file.name}" est trop volumineux (max 5MB)`);
+                            return;
+                        }
+
+                        // Vérifier si le fichier n'est pas déjà sélectionné
+                        const isDuplicate = selectedFilesArray.some(existingFile => 
+                            existingFile.name === file.name && existingFile.size === file.size
+                        );
+
+                        if (!isDuplicate) {
+                            selectedFilesArray.push(file);
+                            createFilePreview(file);
+                            updateFileCounter();
+                        } else {
+                            showError(`Le fichier "${file.name}" est déjà sélectionné`);
+                        }
+                    } else {
+                        showError(`Le fichier "${file.name}" n'est pas une image valide`);
+                    }
+                });
+
+                // Mettre à jour l'input file avec les fichiers sélectionnés
+                updateFileInput();
+            }
+
+            function createFilePreview(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.createElement('div');
+                    preview.className = 'file-preview';
+                    preview.dataset.filename = file.name;
+                    
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" alt="${file.name}">
+                        <div class="file-info">
+                            <span class="file-name">${file.name}</span>
+                            <span class="file-size">${formatFileSize(file.size)}</span>
+                        </div>
+                        <button type="button" class="remove-file" onclick="removeFile('${file.name}')" title="Supprimer cette image">×</button>
+                    `;
+                    selectedFiles.appendChild(preview);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function removeFile(filename) {
+                // Supprimer le fichier du tableau
+                selectedFilesArray = selectedFilesArray.filter(file => file.name !== filename);
+                
+                // Supprimer la prévisualisation
+                const preview = selectedFiles.querySelector(`[data-filename="${filename}"]`);
+                if (preview) {
+                    preview.remove();
+                }
+                
+                updateFileCounter();
+                updateFileInput();
+            }
+
+            function updateFileCounter() {
+                const count = selectedFilesArray.length;
+                if (count === 0) {
+                    fileCounter.textContent = 'Aucune image sélectionnée';
+                } else if (count === 1) {
+                    fileCounter.textContent = '1 image sélectionnée';
+                } else {
+                    fileCounter.textContent = `${count} images sélectionnées`;
+                }
+
+                // Changer la couleur selon le nombre de fichiers
+                if (count >= maxFiles) {
+                    fileCounter.style.color = '#e74c3c';
+                    fileInputContainer.style.borderColor = '#e74c3c';
+                } else {
+                    fileCounter.style.color = '#7f8c8d';
+                    fileInputContainer.style.borderColor = '#bdc3c7';
+                }
+            }
+
+            function updateFileInput() {
+                // Créer un nouveau FileList avec les fichiers sélectionnés
+                const dt = new DataTransfer();
+                selectedFilesArray.forEach(file => dt.items.add(file));
+                fileInput.files = dt.files;
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            function showError(message) {
+                // Créer un message d'erreur temporaire
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = `
+                    background: #f8d7da;
+                    color: #721c24;
+                    padding: 0.5rem 1rem;
+                    border-radius: 4px;
+                    margin: 0.5rem 0;
+                    border: 1px solid #f5c6cb;
+                    font-size: 0.9rem;
+                `;
+                errorDiv.textContent = message;
+                
+                selectedFiles.parentNode.insertBefore(errorDiv, selectedFiles);
+                
+                // Supprimer le message après 3 secondes
+                setTimeout(() => {
+                    errorDiv.remove();
+                }, 3000);
+            }
+
+            // Validation en temps réel
+            const inputs = document.querySelectorAll('.form-input');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    validateField(this);
+                });
+            });
+
+            function validateField(field) {
+                const value = field.value.trim();
+                field.classList.remove('error', 'success');
+
+                if (field.hasAttribute('required') && !value) {
+                    field.classList.add('error');
+                } else if (value) {
+                    field.classList.add('success');
+                }
+            }
+
+            // Initialiser le compteur
+            updateFileCounter();
+
+            // Rendre la fonction removeFile globale pour qu'elle soit accessible depuis le HTML
+            window.removeFile = removeFile;
+        });
+    </script>
 {% endblock %} 

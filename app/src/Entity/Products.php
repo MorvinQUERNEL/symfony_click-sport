@@ -78,6 +78,11 @@ class Products
 
     public function setPrice(float $price): static
     {
+        // Convertir en float si c'est une chaîne
+        if (is_string($price)) {
+            $price = (float) $price;
+        }
+        
         $this->price = $price;
 
         return $this;
