@@ -1,65 +1,67 @@
 {% extends 'base.html.twig' %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="/css/home.css">
-{% endblock %}
+{% block title %}Accueil - Click & Sport{% endblock %}
 
 {% block body %}
 <header class="main-header">
-    <nav class="navbar">
-        <div class="logo-container">
-            <img src="{{asset('images/logo_simple.png')}}" alt="Logo Click Sport" class="logo">
-        </div>
-        <button class="burger" id="burger-menu" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-links">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <ul class="nav-links" id="nav-links">
-            <li><a href="#" class="active">Accueil</a></li>
-            <li><a href="#categories">Catégories</a></li>
-            <li><a href="#articles">Articles</a></li>
-            <li><a href="#contact">Contact</a></li>
-            {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
-                <li><a href="{{ path('app_product_add') }}" class="admin-link">Ajouter un produit</a></li>
-            {% endif %}
-            {% if app.user %}
-                <li><a href="{{ path('app_logout') }}" class="logout-link">Déconnexion</a></li>
-            {% else %}
-                <li><a href="{{ path('app_login') }}" class="login-link">Connectez-vous</a></li>
-            {% endif %}
-        </ul>
-    </nav>
     <div class="hero-section">
-        <h1>Bienvenue sur Click Sport</h1>
+        <h1>Votre équipement sportif au meilleur prix</h1>
         {% if app.user %}
-            <p>Bonjour {{ app.user.firstname }} {{ app.user.name }} ! Tout votre équipement sportif au meilleur prix !</p>
+            <p>Bienvenue, {{ app.user.firstname }} ! Prêt pour une nouvelle séance ?</p>
         {% else %}
-            <p>Tout votre équipement sportif au meilleur prix !</p>
+            <p>Explorez nos catégories et trouvez le matériel parfait pour vous dépasser.</p>
         {% endif %}
     </div>
 </header>
 
 <main>
     <section id="categories" class="categories-section">
-        <h2>Nos Catégories</h2>
+        <h2 class="section-title">Nos Catégories</h2>
         <div class="categories">
             <div class="category-card">
-                <img src="/images/football.png" alt="Football">
+                <img src="{{ asset('images/football.png') }}" alt="Football">
                 <span>Football</span>
             </div>
             <div class="category-card">
-                <img src="/images/BasketBall.png" alt="Basketball">
+                <img src="{{ asset('images/BasketBall.png') }}" alt="Basketball">
                 <span>Basketball</span>
             </div>
             <div class="category-card">
-                <img src="/images/golf.png" alt="Golf">
+                <img src="{{ asset('images/golf.png') }}" alt="Golf">
                 <span>Golf</span>
             </div>
             <div class="category-card">
-                <img src="/images/Tennis.png" alt="Tennis">
+                <img src="{{ asset('images/Tennis.png') }}" alt="Tennis">
                 <span>Tennis</span>
             </div>
+        </div>
+    </section>
+
+    <section id="articles" class="articles-section">
+        <h2 class="section-title">Nouveautés</h2>
+        <div class="articles-grid">
+            {% for product in latestProducts %}
+                <div class="product-card">
+                    <a href="#"> {# Mettez ici le lien vers la fiche produit #}
+                        <div class="product-image-container">
+                            {% if product.pictures is not empty %}
+                                <img src="{{ asset(product.pictures.first.path) }}" alt="{{ product.title }}">
+                            {% else %}
+                                <img src="{{ asset('images/placeholder.png') }}" alt="Image par défaut">
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            {% if product.categories %}
+                                <span class="product-category">{{ product.categories.title }}</span>
+                            {% endif %}
+                            <h3 class="product-title">{{ product.title }}</h3>
+                            <div class="product-price">{{ product.price|number_format(2, ',', ' ') }} €</div>
+                        </div>
+                    </a>
+                </div>
+            {% else %}
+                <p>Aucun article récent à afficher pour le moment.</p>
+            {% endfor %}
         </div>
     </section>
 </main>
@@ -67,27 +69,11 @@
 <footer class="footer">
     <div class="footer-content">
         <div class="socials">
-            <a href="#"><img src="/svg/facebook.svg" alt="Facebook"></a>
-            <a href="#"><img src="/svg/instagram.svg" alt="Instagram"></a>
-            <a href="#"><img src="/svg/twitter.svg" alt="Twitter"></a>
+            <a href="#"><img src="{{ asset('svg/facebook.svg') }}" alt="Facebook"></a>
+            <a href="#"><img src="{{ asset('svg/instagram.svg') }}" alt="Instagram"></a>
+            <a href="#"><img src="{{ asset('svg/twitter.svg') }}" alt="Twitter"></a>
         </div>
-        <div class="legal">&copy; 2024 Click Sport - Tous droits réservés</div>
+        <div class="legal">&copy; {{ "now"|date("Y") }} Click & Sport - Tous droits réservés</div>
     </div>
 </footer>
-{% endblock %}
-
-{% block javascripts %}
-{{ parent() }}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const burger = document.getElementById('burger-menu');
-    const navLinks = document.getElementById('nav-links');
-    burger.addEventListener('click', function() {
-        burger.classList.toggle('open');
-        navLinks.classList.toggle('open');
-        const expanded = burger.getAttribute('aria-expanded') === 'true';
-        burger.setAttribute('aria-expanded', !expanded);
-    });
-});
-</script>
 {% endblock %}
