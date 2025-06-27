@@ -111,7 +111,7 @@ class ProductType extends AbstractType
                 ],
             ])
             ->add('images', FileType::class, [
-                'label' => 'Images du produit (5 max)',
+                'label' => 'Images du produit (plusieurs possibles)',
                 'multiple' => true,
                 'mapped' => false,
                 'required' => false,
@@ -119,6 +119,21 @@ class ProductType extends AbstractType
                     'class' => 'form-input file-input',
                     'accept' => 'image/*'
                 ],
+                'constraints' => [
+                    new \Symfony\Component\Validator\Constraints\All([
+                        new \Symfony\Component\Validator\Constraints\File([
+                            'maxSize' => '5M',
+                            'mimeTypes' => [
+                                'image/jpeg',
+                                'image/png',
+                                'image/webp',
+                                'image/gif',
+                            ],
+                            'mimeTypesMessage' => 'Veuillez uploader une image valide (JPG, PNG, etc.).',
+                            'maxSizeMessage' => 'L\'image ne doit pas dépasser 5Mo.',
+                        ])
+                    ])
+                ]
             ])
         ;
     }

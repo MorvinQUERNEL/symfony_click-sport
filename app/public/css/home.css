@@ -28,7 +28,7 @@ body {
 
 img {
     max-width: 100%;
-    display: block;
+    display: block;;
 }
 
 a {
@@ -61,7 +61,7 @@ ul {
 }
 
 .logo-container .logo {
-    height: 45px;
+    height: 60px;
     transition: transform 0.3s ease;
 }
 
@@ -361,12 +361,20 @@ main {
         display: block;
     }
 
+    .navbar-container {
+        height: 80px;
+    }
+
+    .logo-container .logo {
+        height: 55px;
+    }
+
     .nav-links {
         position: fixed;
-        top: 70px;
+        top: 80px;
         left: 0;
         width: 100%;
-        height: calc(100vh - 70px);
+        height: calc(100vh - 80px);
         background-color: rgba(28, 40, 51, 0.98);
         backdrop-filter: blur(10px);
         flex-direction: column;

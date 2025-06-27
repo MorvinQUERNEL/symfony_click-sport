@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le Produit: {{ product.title }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/product-form.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="product-form-container">
+        <div class="form-header">
+            <h1>Modifier le produit</h1>
+            <p>{{ product.title }}</p>
+        </div>
+
+        {{ include('partials/_flash_messages.html.twig') }}
+
+        <div class="form-section">
+            <h3>Images actuelles</h3>
+            <div class="current-images-grid">
+                {% for picture in product.pictures %}
+                    <div class="current-image-item">
+                        <img src="{{ asset(picture.path) }}" alt="Image existante">
+                        <a href="{{ path('app_product_delete_picture', {'id': picture.id}) }}" 
+                           class="delete-picture-btn" 
+                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette image ?');">
+                           &times;
+                        </a>
+                    </div>
+                {% else %}
+                    <p>Ce produit n'a pas encore d'images.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        {{ form_start(form, {'attr': {'class': 'product-form', 'novalidate': 'novalidate'}}) }}
+            {# ... (champs du formulaire comme dans add.html.twig) ... #}
+             <div class="form-section">
+            <h3>Informations principales</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(form.title) }}
+                    {{ form_widget(form.title) }}
+                    {{ form_errors(form.title) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.price) }}
+                    {{ form_widget(form.price) }}
+                    {{ form_errors(form.price) }}
+                </div>
+            </div>
+            <div class="form-group">
+                {{ form_label(form.categories) }}
+                {{ form_widget(form.categories) }}
+                {{ form_errors(form.categories) }}
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Détails du produit</h3>
+            <div class="form-group">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+                {{ form_errors(form.description) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.notice) }}
+                {{ form_widget(form.notice) }}
+                {{ form_errors(form.notice) }}
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Ajouter de nouvelles images</h3>
+            <div class="form-group">
+                {{ form_label(form.images) }}
+                <div class="file-input-container">
+                    {{ form_widget(form.images) }}
+                    <label for="{{ form.images.vars.id }}" class="file-input-label">
+                        <span class="upload-icon">📷</span>
+                        <span class="upload-text">Cliquez ou glissez-déposez vos images ici</span>
+                        <span class="upload-hint">Formats: JPG, PNG, GIF, WebP (Max 5Mo)</span>
+                    </label>
+                </div>
+                {{ form_errors(form.images) }}
+                <div class="selected-files" id="selectedFilesPreview"></div>
+            </div>
+        </div>
+            <div class="form-actions">
+                <a href="{{ path('app_product_list') }}" class="btn btn-secondary">Annuler</a>
+                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+    
+    <script>
+    // Script de prévisualisation (identique à add.html.twig)
+    </script>
+{% endblock %} 

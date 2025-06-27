@@ -1,231 +1,85 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des produits - Click & Sport{% endblock %}
+{% block title %}Nos Produits - Click & Sport{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-    <style>
-        .products-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .products-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .products-header h1 {
-            color: #2c3e50;
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .products-header p {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
-
-        .add-product-btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            transition: all 0.3s ease;
-        }
-
-        .add-product-btn:hover {
-            background: linear-gradient(135deg, #2980b9, #1f5f8b);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .product-images {
-            position: relative;
-            height: 200px;
-            overflow: hidden;
-        }
-
-        .product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .product-image-placeholder {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #7f8c8d;
-            font-size: 1.2rem;
-        }
-
-        .product-info {
-            padding: 1.5rem;
-        }
-
-        .product-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-price {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #27ae60;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-category {
-            display: inline-block;
-            background: #3498db;
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-bottom: 1rem;
-        }
-
-        .product-description {
-            color: #7f8c8d;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-
-        .product-notice {
-            background: #f8f9fa;
-            padding: 0.75rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: #6c757d;
-            border-left: 3px solid #3498db;
-        }
-
-        .no-products {
-            text-align: center;
-            padding: 3rem;
-            color: #7f8c8d;
-        }
-
-        .no-products h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .no-products p {
-            font-size: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .products-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .products-header h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/product-list.css') }}">
 {% endblock %}
 
 {% block body %}
     <div class="products-container">
-        <div class="products-header">
-            <h1>Nos produits</h1>
-            <p>Découvrez notre sélection de produits de sport</p>
-        </div>
+        <header class="products-header">
+            <h1>Nos Produits</h1>
+            <p>Découvrez notre sélection d'équipements pour tous les sportifs.</p>
+        </header>
 
         {% if is_granted('ROLE_ADMIN') %}
-            <div style="text-align: center;">
+            <div class="admin-actions-header">
                 <a href="{{ path('app_product_add') }}" class="add-product-btn">
-                    ➕ Ajouter un produit
+                    ➕ Ajouter un nouveau produit
                 </a>
             </div>
         {% endif %}
 
         {% if products is empty %}
             <div class="no-products">
-                <h3>Aucun produit disponible</h3>
-                <p>Il n'y a pas encore de produits dans notre catalogue.</p>
+                <h3>Aucun produit à afficher</h3>
+                <p>Le catalogue est actuellement vide. Revenez bientôt !</p>
                 {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_product_add') }}" class="add-product-btn">
-                        Ajouter le premier produit
+                        Créer le premier produit
                     </a>
                 {% endif %}
             </div>
         {% else %}
             <div class="products-grid">
                 {% for product in products %}
-                    <div class="product-card">
-                        <div class="product-images">
-                            {% if product.pictures is not empty %}
-                                {% set firstPicture = product.pictures.first() %}
-                                <img src="{{ firstPicture.path }}" alt="{{ product.title }}" class="product-image">
-                            {% else %}
-                                <div class="product-image-placeholder">
-                                    📷 Aucune image
-                                </div>
-                            {% endif %}
+                    <article class="product-card">
+                        <div class="product-image-container">
+                            <a href="#"> {# Lien vers la page détail du produit #}
+                                {% if product.pictures is not empty %}
+                                    <img src="{{ asset(product.pictures.first.path) }}" alt="{{ product.title }}" class="product-image">
+                                {% else %}
+                                    <div class="product-image-placeholder">
+                                        <span>📷</span>
+                                    </div>
+                                {% endif %}
+                            </a>
                         </div>
                         
                         <div class="product-info">
-                            <h3 class="product-title">{{ product.title }}</h3>
-                            <div class="product-price">{{ product.price|number_format(2, ',', ' ') }} €</div>
-                            
                             {% if product.categories %}
                                 <span class="product-category">{{ product.categories.title }}</span>
                             {% endif %}
-                            
-                            {% if product.description %}
-                                <p class="product-description">{{ product.description }}</p>
-                            {% endif %}
-                            
-                            {% if product.notice %}
-                                <div class="product-notice">
-                                    <strong>Notice :</strong> {{ product.notice }}
-                                </div>
-                            {% endif %}
-                            
-                            {% if product.pictures|length > 1 %}
-                                <div style="margin-top: 1rem; font-size: 0.8rem; color: #7f8c8d;">
-                                    📸 {{ product.pictures|length }} image(s)
-                                </div>
-                            {% endif %}
+                            <h3 class="product-title">
+                                <a href="#">{{ product.title }}</a>
+                            </h3>
+                            <p class="product-description">{{ product.description|slice(0, 80) ~ '...' }}</p>
+                            <div class="product-price">{{ product.price|number_format(2, ',', ' ') }} €</div>
                         </div>
-                    </div>
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="product-admin-actions">
+                                <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="edit-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                      <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V12h2.293L12.793 5.5z"/>
+                                    </svg>
+                                    Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                                    <button type="submit" class="delete-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                          <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                        </svg>
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </article>
                 {% endfor %}
             </div>
         {% endif %}

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ajouter un produit - Click & Sport{% endblock %}
+{% block title %}Ajouter un Produit - Administration{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -11,256 +11,170 @@
     <div class="product-form-container">
         <div class="form-header">
             <h1>Ajouter un nouveau produit</h1>
-            <p>Remplissez les informations ci-dessous pour ajouter un produit à votre catalogue</p>
+            <p>Remplissez les informations ci-dessous pour l'ajouter au catalogue.</p>
         </div>
 
-        {# Affichage des messages flash #}
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #c3e6cb;">
-                {{ message }}
-            </div>
-        {% endfor %}
+        {{ include('partials/_flash_messages.html.twig') }}
 
-        {% for message in app.flashes('error') %}
-            <div class="alert alert-error" style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #f5c6cb;">
-                {{ message }}
-            </div>
-        {% endfor %}
-
-        {{ form_start(form, {'attr': {'class': 'product-form', 'enctype': 'multipart/form-data'}}) }}
+        {{ form_start(form, {'attr': {'class': 'product-form', 'novalidate': 'novalidate'}}) }}
         
         <div class="form-section">
-            <h3>Informations générales</h3>
-            
+            <h3>Informations principales</h3>
             <div class="form-row">
                 <div class="form-group">
-                    {{ form_label(form.title, 'Titre du produit', {'label_attr': {'class': 'form-label required-field'}}) }}
-                    {{ form_widget(form.title, {'attr': {'class': 'form-input'}}) }}
-                    {{ form_errors(form.title, {'attr': {'class': 'error-message'}}) }}
+                    {{ form_label(form.title) }}
+                    {{ form_widget(form.title) }}
+                    {{ form_errors(form.title) }}
                 </div>
-                
                 <div class="form-group">
-                    {{ form_label(form.price, 'Prix', {'label_attr': {'class': 'form-label required-field'}}) }}
-                    {{ form_widget(form.price, {'attr': {'class': 'form-input'}}) }}
-                    {{ form_errors(form.price, {'attr': {'class': 'error-message'}}) }}
+                    {{ form_label(form.price) }}
+                    {{ form_widget(form.price) }}
+                    {{ form_errors(form.price) }}
                 </div>
             </div>
-
             <div class="form-group">
-                {{ form_label(form.categories, 'Catégorie', {'label_attr': {'class': 'form-label required-field'}}) }}
-                {{ form_widget(form.categories, {'attr': {'class': 'form-input'}}) }}
-                {{ form_errors(form.categories, {'attr': {'class': 'error-message'}}) }}
+                {{ form_label(form.categories) }}
+                {{ form_widget(form.categories) }}
+                {{ form_errors(form.categories) }}
             </div>
         </div>
 
         <div class="form-section">
-            <h3>Description et détails</h3>
-            
+            <h3>Détails du produit</h3>
             <div class="form-group">
-                {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.description, {'attr': {'class': 'form-input'}}) }}
-                {{ form_errors(form.description, {'attr': {'class': 'error-message'}}) }}
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+                {{ form_errors(form.description) }}
             </div>
-
             <div class="form-group">
-                {{ form_label(form.notice, 'Notice / Instructions', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.notice, {'attr': {'class': 'form-input'}}) }}
-                {{ form_errors(form.notice, {'attr': {'class': 'error-message'}}) }}
+                {{ form_label(form.notice) }}
+                {{ form_widget(form.notice) }}
+                {{ form_errors(form.notice) }}
             </div>
         </div>
 
         <div class="form-section">
-            <h3>Images du produit</h3>
-            
+            <h3>Images</h3>
             <div class="form-group">
-                <div class="file-input-container" id="fileInputContainer">
-                    {{ form_widget(form.images, {'attr': {'class': 'file-input', 'id': 'fileInput'}}) }}
-                    <div class="file-input-label">
-                        <div class="upload-icon">📷</div>
-                        <div class="upload-text">Cliquez ou glissez vos images ici</div>
-                        <div class="upload-hint">Formats acceptés : JPG, PNG, WebP, GIF (max 5MB par image)</div>
-                    </div>
+                {{ form_label(form.images) }}
+                <div class="file-input-container">
+                    {{ form_widget(form.images) }}
+                    <label for="{{ form.images.vars.id }}" class="file-input-label">
+                        <span class="upload-icon">📷</span>
+                        <span class="upload-text">Cliquez ou glissez-déposez vos images ici</span>
+                        <span class="upload-hint">Formats: JPG, PNG, GIF, WebP (Max 5Mo)</span>
+                    </label>
                 </div>
-                {{ form_errors(form.images, {'attr': {'class': 'error-message'}}) }}
-                
-                <div class="selected-files" id="selectedFiles"></div>
-                <div class="file-counter" id="fileCounter" style="margin-top: 1rem; text-align: center; color: #7f8c8d; font-size: 0.9rem;"></div>
+                {{ form_errors(form.images) }}
+                <div class="selected-files" id="selectedFilesPreview"></div>
             </div>
         </div>
 
         <div class="form-actions">
-            <a href="{{ path('app_home') }}" class="btn btn-secondary">
-                <span>←</span> Annuler
-            </a>
-            <button type="submit" class="btn btn-primary">
-                <span>✓</span> Ajouter le produit
-            </button>
+            <a href="{{ path('app_product_list') }}" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-primary">Ajouter le produit</button>
         </div>
 
         {{ form_end(form) }}
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const fileInput = document.getElementById('fileInput');
-            const fileInputContainer = document.getElementById('fileInputContainer');
-            const selectedFiles = document.getElementById('selectedFiles');
-            const fileCounter = document.getElementById('fileCounter');
-            const maxFiles = 5;
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileInput = document.getElementById('{{ form.images.vars.id }}');
+            const previewContainer = document.getElementById('selectedFilesPreview');
+            let selectedFiles = []; // Garder une trace des fichiers sélectionnés
 
-            // Gestion du drag & drop
-            fileInputContainer.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                fileInputContainer.classList.add('dragover');
-            });
+            fileInput.addEventListener('change', handleFileSelect);
 
-            fileInputContainer.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                fileInputContainer.classList.remove('dragover');
-            });
+            function handleFileSelect(event) {
+                const newFiles = Array.from(event.target.files);
+                selectedFiles.push(...newFiles);
+                updatePreviews();
+                updateFileInput();
+            }
+            
+            function updatePreviews() {
+                previewContainer.innerHTML = ''; // Toujours tout redessiner
+                selectedFiles.forEach((file, index) => {
+                    if (!file.type.startsWith('image/')) return;
 
-            fileInputContainer.addEventListener('drop', function(e) {
-                e.preventDefault();
-                fileInputContainer.classList.remove('dragover');
-                const files = Array.from(e.dataTransfer.files);
-                handleFiles(files);
-            });
+                    const previewWrapper = document.createElement('div');
+                    previewWrapper.classList.add('file-preview');
 
-            // Gestion de la sélection de fichiers
-            fileInput.addEventListener('change', function(e) {
-                const files = Array.from(e.target.files);
-                handleFiles(files);
-            });
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.onload = () => URL.revokeObjectURL(img.src);
 
-            function handleFiles(files) {
-                // Vider la prévisualisation existante
-                selectedFiles.innerHTML = '';
-                
-                // Limiter le nombre de fichiers
-                const filesToProcess = files.slice(0, maxFiles);
-                
-                filesToProcess.forEach((file, index) => {
-                    if (file.type.startsWith('image/')) {
-                        // Vérifier la taille du fichier (5MB max)
-                        if (file.size > 5 * 1024 * 1024) {
-                            showError(`Le fichier "${file.name}" est trop volumineux (max 5MB)`);
-                            return;
-                        }
-                        
-                        createFilePreview(file, index);
-                    } else {
-                        showError(`Le fichier "${file.name}" n'est pas une image valide`);
-                    }
+                    const removeButton = document.createElement('button');
+                    removeButton.classList.add('remove-file-btn');
+                    removeButton.innerHTML = '&times;';
+                    removeButton.type = 'button'; // Empêcher la soumission du formulaire
+                    removeButton.onclick = () => removeFile(index);
+
+                    previewWrapper.appendChild(img);
+                    previewWrapper.appendChild(removeButton);
+                    previewContainer.appendChild(previewWrapper);
                 });
-                
-                updateFileCounter(filesToProcess.length);
             }
 
-            function createFilePreview(file, index) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.createElement('div');
-                    preview.className = 'file-preview';
-                    preview.dataset.filename = file.name;
-                    
-                    preview.innerHTML = `
-                        <img src="${e.target.result}" alt="${file.name}">
-                        <div class="file-info">
-                            <span class="file-name">${file.name}</span>
-                            <span class="file-size">${formatFileSize(file.size)}</span>
-                        </div>
-                        <button type="button" class="remove-file" onclick="removeFile('${file.name}')" title="Supprimer cette image">×</button>
-                    `;
-                    selectedFiles.appendChild(preview);
-                };
-                reader.readAsDataURL(file);
+            function removeFile(indexToRemove) {
+                selectedFiles.splice(indexToRemove, 1);
+                updatePreviews();
+                updateFileInput();
             }
 
-            function removeFile(filename) {
-                // Supprimer la prévisualisation
-                const preview = selectedFiles.querySelector(`[data-filename="${filename}"]`);
-                if (preview) {
-                    preview.remove();
-                }
-                
-                // Mettre à jour le compteur
-                const remainingFiles = selectedFiles.querySelectorAll('.file-preview');
-                updateFileCounter(remainingFiles.length);
-            }
-
-            function updateFileCounter(count) {
-                if (count === 0) {
-                    fileCounter.textContent = 'Aucune image sélectionnée';
-                } else if (count === 1) {
-                    fileCounter.textContent = '1 image sélectionnée';
-                } else {
-                    fileCounter.textContent = `${count} images sélectionnées`;
-                }
-
-                // Changer la couleur selon le nombre de fichiers
-                if (count >= maxFiles) {
-                    fileCounter.style.color = '#e74c3c';
-                    fileInputContainer.style.borderColor = '#e74c3c';
-                } else {
-                    fileCounter.style.color = '#7f8c8d';
-                    fileInputContainer.style.borderColor = '#bdc3c7';
-                }
-            }
-
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-
-            function showError(message) {
-                // Créer un message d'erreur temporaire
-                const errorDiv = document.createElement('div');
-                errorDiv.style.cssText = `
-                    background: #f8d7da;
-                    color: #721c24;
-                    padding: 0.5rem 1rem;
-                    border-radius: 4px;
-                    margin: 0.5rem 0;
-                    border: 1px solid #f5c6cb;
-                    font-size: 0.9rem;
-                `;
-                errorDiv.textContent = message;
-                
-                selectedFiles.parentNode.insertBefore(errorDiv, selectedFiles);
-                
-                // Supprimer le message après 3 secondes
-                setTimeout(() => {
-                    errorDiv.remove();
-                }, 3000);
-            }
-
-            // Validation en temps réel
-            const inputs = document.querySelectorAll('.form-input');
-            inputs.forEach(input => {
-                input.addEventListener('blur', function() {
-                    validateField(this);
+            function updateFileInput() {
+                const dataTransfer = new DataTransfer();
+                selectedFiles.forEach(file => {
+                    dataTransfer.items.add(file);
                 });
-            });
-
-            function validateField(field) {
-                const value = field.value.trim();
-                field.classList.remove('error', 'success');
-
-                if (field.hasAttribute('required') && !value) {
-                    field.classList.add('error');
-                } else if (value) {
-                    field.classList.add('success');
-                }
+                fileInput.files = dataTransfer.files;
             }
-
-            // Initialiser le compteur
-            updateFileCounter(0);
-
-            // Rendre la fonction removeFile globale pour qu'elle soit accessible depuis le HTML
-            window.removeFile = removeFile;
         });
     </script>
+
+    <style>
+        .selected-files {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .file-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            position: relative; /* Nécessaire pour le positionnement du bouton */
+        }
+        .file-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .remove-file-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            background-color: rgba(231, 76, 60, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            line-height: 1;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .remove-file-btn:hover {
+            background-color: #e74c3c;
+            transform: scale(1.1);
+        }
+    </style>
 {% endblock %} 
