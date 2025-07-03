@@ -56,16 +56,16 @@
         <div class="form-section">
             <h3>Images</h3>
             <div class="form-group">
-                {{ form_label(form.images) }}
+                {{ form_label(form.pictureFiles) }}
                 <div class="file-input-container">
-                    {{ form_widget(form.images) }}
-                    <label for="{{ form.images.vars.id }}" class="file-input-label">
+                    {{ form_widget(form.pictureFiles) }}
+                    <label for="{{ form.pictureFiles.vars.id }}" class="file-input-label">
                         <span class="upload-icon">📷</span>
                         <span class="upload-text">Cliquez ou glissez-déposez vos images ici</span>
                         <span class="upload-hint">Formats: JPG, PNG, GIF, WebP (Max 5Mo)</span>
                     </label>
                 </div>
-                {{ form_errors(form.images) }}
+                {{ form_errors(form.pictureFiles) }}
                 <div class="selected-files" id="selectedFilesPreview"></div>
             </div>
         </div>
@@ -80,7 +80,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const fileInput = document.getElementById('{{ form.images.vars.id }}');
+            const fileInput = document.getElementById('{{ form.pictureFiles.vars.id }}');
             const previewContainer = document.getElementById('selectedFilesPreview');
             let selectedFiles = []; // Garder une trace des fichiers sélectionnés
 

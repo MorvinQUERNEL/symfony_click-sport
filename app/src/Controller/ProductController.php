@@ -5,19 +5,20 @@ namespace App\Controller;
 use App\Entity\Products;
 use App\Entity\Pictures;
 use App\Form\ProductType;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
-#[IsGranted('ROLE_ADMIN')]
+
 class ProductController extends AbstractController
 {
     #[Route('/admin/product/add', name: 'app_product_add')]
-    public function add(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    #[IsGranted('ROLE_ADMIN')]
+    public function add(Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader): Response
     {
         $product = new Products();
         $form = $this->createForm(ProductType::class, $product);
@@ -25,29 +26,16 @@ class ProductController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // 1. Gérer l'upload des images
-            $uploadedFiles = $form->get('images')->getData();
+            $uploadedFiles = $form->get('pictureFiles')->getData();
             
             foreach ($uploadedFiles as $uploadedFile) {
                 if ($uploadedFile) {
-                    $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-                    $safeFilename = $slugger->slug($originalFilename);
-                    $newFilename = $safeFilename.'-'.uniqid().'.'.$uploadedFile->guessExtension();
-
                     try {
-                        $uploadedFile->move(
-                            $this->getParameter('upload_directory'),
-                            $newFilename
-                        );
+                        $picture = $fileUploader->upload($uploadedFile);
+                        $product->addPicture($picture);
                     } catch (\Exception $e) {
                         $this->addFlash('error', 'Une erreur est survenue lors de l\'upload d\'une image.');
-                        // Gérer l'erreur, peut-être logger le message
-                        continue; // Passe à l'image suivante
                     }
-
-                    // 2. Créer l'entité Picture et la lier au produit
-                    $picture = new Pictures();
-                    $picture->setPath('/upload/' . $newFilename);
-                    $product->addPicture($picture);
                 }
             }
 
@@ -153,34 +141,23 @@ class ProductController extends AbstractController
 
     #[Route('/admin/product/{id}/edit', name: 'app_product_edit')]
     #[IsGranted('ROLE_ADMIN')]
-    public function edit(Request $request, Products $product, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function edit(Request $request, Products $product, EntityManagerInterface $entityManager, FileUploader $fileUploader): Response
     {
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Gérer l'upload des nouvelles images
-            $uploadedFiles = $form->get('images')->getData();
+            $uploadedFiles = $form->get('pictureFiles')->getData();
             
             foreach ($uploadedFiles as $uploadedFile) {
                 if ($uploadedFile) {
-                    $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-                    $safeFilename = $slugger->slug($originalFilename);
-                    $newFilename = $safeFilename.'-'.uniqid().'.'.$uploadedFile->guessExtension();
-
                     try {
-                        $uploadedFile->move(
-                            $this->getParameter('upload_directory'),
-                            $newFilename
-                        );
+                        $picture = $fileUploader->upload($uploadedFile);
+                        $product->addPicture($picture);
                     } catch (\Exception $e) {
                         $this->addFlash('error', 'Une erreur est survenue lors de l\'upload d\'une image.');
-                        continue;
                     }
-
-                    $picture = new Pictures();
-                    $picture->setPath('/upload/' . $newFilename);
-                    $product->addPicture($picture);
                 }
             }
             
